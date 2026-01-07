@@ -164,6 +164,9 @@ window.Load += () => {
     int location = gl.GetUniformLocation(program, "uTexture");
     gl.Uniform1(location, 0);
 
+    gl.Enable(EnableCap.Blend);
+    gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
     gl.ClearColor(Color.CornflowerBlue);
 };
 
