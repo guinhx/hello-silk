@@ -1,0 +1,90 @@
+# =========================
+# .NET build output
+# =========================
+bin/
+obj/
+
+# =========================
+# User-specific files
+# =========================
+*.user
+*.rsuser
+*.suo
+*.userprefs
+
+# =========================
+# Logs / temp
+# =========================
+*.log
+*.tmp
+*.temp
+
+# =========================
+# OS generated files
+# =========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# =========================
+# Visual Studio / Rider
+# =========================
+.vs/
+.idea/
+
+# =========================
+# Zed editor
+# =========================
+.zed/
+
+# =========================
+# Debug / profiling dumps
+# =========================
+*.dmp
+
+# =========================
+# Native / graphics artifacts
+# =========================
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.dll
+
+# =========================
+# Shader compiled output
+# =========================
+*.spv
+*.glslc
+*.dxil
+*.metallib
+
+# =========================
+# Vulkan validation / cache
+# =========================
+.vulkan/
+vk_layer_settings.txt
+
+# =========================
+# NuGet
+# =========================
+.nuget/
+packages/
+
+# =========================
+# Coverage / test output
+# =========================
+TestResults/
+coverage/
+
+# =========================
+# Publish output
+# =========================
+publish/
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.*
