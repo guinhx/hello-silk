@@ -3,6 +3,8 @@ using Silk.NET.Maths;
 using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 
+using StbImageSharp;
+
 using System.Drawing;
 
 var options = WindowOptions.Default with
@@ -21,6 +23,8 @@ uint ebo = 0;
 
 // shader program
 uint program = 0;
+
+uint texture = 0;
 
 window.Load += () => {
     gl = window.CreateOpenGL();
@@ -81,13 +85,15 @@ window.Load += () => {
 
     // Receive the input from the vertex shader in an attribute
     in vec2 frag_texCoords;
+    uniform sampler2D uTexture;
 
     out vec4 out_color;
 
     void main()
     {
         // This will allow us to see the texture coordinates in action!
-        out_color = vec4(frag_texCoords.x, frag_texCoords.y, 0.0, 1.0);
+        // out_color = vec4(frag_texCoords.x, frag_texCoords.y, 0.0, 1.0);
+        out_color = texture(uTexture, frag_texCoords);
     }";
 
     uint vertexShader = gl.CreateShader(ShaderType.VertexShader);
@@ -136,6 +142,28 @@ window.Load += () => {
     gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
     gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
 
+    texture = gl.GenTexture();
+    gl.ActiveTexture(TextureUnit.Texture0);
+    gl.BindTexture(TextureTarget.Texture2D, texture);
+
+    ImageResult result = ImageResult.FromMemory(File.ReadAllBytes("silk.png"), ColorComponents.RedGreenBlueAlpha);
+
+    unsafe {
+        fixed (byte* ptr = result.Data)
+            gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint)result.Width,
+                (uint)result.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, ptr);
+    }
+
+    gl.TexParameterI(GLEnum.Texture2D, GLEnum.TextureWrapS, (int)TextureWrapMode.Repeat);
+    gl.TexParameterI(GLEnum.Texture2D, GLEnum.TextureWrapT, (int)TextureWrapMode.Repeat);
+    gl.TexParameterI(GLEnum.Texture2D, GLEnum.TextureMinFilter, (int)TextureMinFilter.Nearest);
+    gl.TexParameterI(GLEnum.Texture2D, GLEnum.TextureMagFilter, (int)TextureMagFilter.Nearest);
+
+    gl.BindTexture(TextureTarget.Texture2D, 0);
+
+    int location = gl.GetUniformLocation(program, "uTexture");
+    gl.Uniform1(location, 0);
+
     gl.ClearColor(Color.CornflowerBlue);
 };
 
@@ -150,6 +178,9 @@ window.Render += (double deltaTime) => {
         gl.UseProgram(program);
         gl.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, (void*) 0);
     }
+
+    gl.ActiveTexture(TextureUnit.Texture0);
+    unsafe { gl.BindTexture(TextureTarget.Texture2D, texture); }
 };
 
 window.Run();
